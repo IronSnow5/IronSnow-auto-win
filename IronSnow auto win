@@ -43,12 +43,14 @@ local function getBeds()
 end
 
 local bed = getBeds()[1]
-if bed ~= nil and bed then
-    spawnBinds:Kill()
-    spawnBinds:BindToSpawn("BedTp",function(char)
-        local bedTween = TweenService:Create(char.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = bed.CFrame + Vector3.new(0, 10, 0)})
-        bedTween:Play()
-        bed = getBeds()[1]
-        spawnBinds:UnbindFromSpawn("BedTp")
-    end)
+for i =1,#getBeds() do
+    if bed ~= nil and bed then
+        spawnBinds:Kill()
+        spawnBinds:BindToSpawn("BedTp",function(char)
+            local bedTween = TweenService:Create(char.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = bed.CFrame + Vector3.new(0, 10, 0)})
+            bedTween:Play()
+            bed = getBeds()[1]
+            spawnBinds:UnbindFromSpawn("BedTp")
+        end)
+    end
 end
