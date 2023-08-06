@@ -1,0 +1,54 @@
+--// credit Damc for helping me
+local TweenService = game:GetService("TweenService")
+
+local spawnBinds = {
+    Binds = {}
+}
+
+game.Players.LocalPlayer.CharacterAdded:Connect(function(char)
+    repeat task.wait() until char ~= nil
+    for i,v in pairs(spawnBinds.Binds) do
+        if type(v) == "function" then
+            v(char)
+        end
+    end
+end)
+
+function spawnBinds:BindToSpawn(e,f)
+    spawnBinds.Binds[e] = f
+end
+
+function spawnBinds:Kill()
+    game.Players.LocalPlayer.Character.Humanoid:TakeDamage(game.Players.LocalPlayer.Character.Humanoid.MaxHealth)
+end
+
+function spawnBinds:UnbindFromSpawn(e)
+    pcall(function()
+        spawnBinds.Binds[e]:Disconnect()
+    end)
+end
+
+local function getBeds()
+    local temp = {}
+    for i,v in pairs(workspace:GetChildren()) do
+        if v.Name == "bed" then
+            pcall(function()
+                if v.Covers.BrickColor ~= game.Players.LocalPlayer.Team.TeamColor then
+                    table.insert(temp,v)
+                end
+            end)
+        end
+    end
+    return temp
+end
+
+local bed = getBeds()[1]
+if bed ~= nil and bed then
+    spawnBinds:Kill()
+    spawnBinds:BindToSpawn("BedTp",function(char)
+        local bedTween = TweenService:Create(char.PrimaryPart, TweenInfo.new(1, Enum.EasingStyle.Linear), {CFrame = bed.CFrame + Vector3.new(0, 10, 0)})
+        bedTween:Play()
+        bed = getBeds()[1]
+        spawnBinds:UnbindFromSpawn("BedTp")
+    end)
+end
